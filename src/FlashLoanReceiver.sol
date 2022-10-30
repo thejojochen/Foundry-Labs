@@ -7,8 +7,12 @@ import { ILendingPool } from "../node_modules/@aave/protocol-v2/contracts/interf
 import { ILendingPoolAddressesProvider } from "../node_modules/@aave/protocol-v2/contracts/interfaces/ILendingPoolAddressesProvider.sol";
 import { IERC20 } from "../node_modules/@aave/protocol-v2/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
 import  "../node_modules/@aave/protocol-v2/contracts/protocol/lendingpool/LendingPool.sol";
+import "forge-std/Test.sol";
+//import  "../lib/openzeppelin-contracts/contracts/utils/Strings.sol";
 
 contract FlashLoanReceiver is FlashLoanReceiverBase {
+
+    //using Strings for uint256;
 
     constructor() FlashLoanReceiverBase(ILendingPoolAddressesProvider(0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5)) public {
         //ADDRESSES_PROVIDER = provider;
@@ -27,8 +31,9 @@ contract FlashLoanReceiver is FlashLoanReceiverBase {
             returns (bool)
         {
 
-            uint256 amountToRepay = amounts[0] + premiums[0];
-            require(amountToRepay > 100000000000000000000, amountToRepay.toString() );
+            // uint256 amountToRepay = amounts[0] + premiums[0];
+            // console.log("amount to repay %s",amountToRepay);
+            //require(amountToRepay > 100000000000000000000, "yo");
             //
             // This contract now has the funds requested.
             // Your logic goes here.
@@ -40,8 +45,11 @@ contract FlashLoanReceiver is FlashLoanReceiverBase {
             // these amounts.
             
             // Approve the LendingPool contract allowance to *pull* the owed amount
+            address USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+            console.log(IERC20(USDT).balanceOf(address(this)));
             for (uint i = 0; i < assets.length; i++) {
                 uint amountOwing = amounts[i].add(premiums[i]);
+                console.log("amount to repay %s", amountOwing);
                 IERC20(assets[i]).approve(address(LENDING_POOL), amountOwing);
             }
             
